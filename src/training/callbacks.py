@@ -14,8 +14,8 @@ class TextGenerationCallback(TrainerCallback):
         model = kwargs["model"]
         tokenizer = kwargs["tokenizer"]
 
-        prompt = "<|user|>\nГотов к сегодняшней ночи?\n<|assistant|>\n"
-        input_ids = tokenizer(prompt, return_tensors="pt").input_ids.to(model.device)
+        prompt = [{"role": "user", "content": "Готов к сегодняшней ночи?"}]
+        input_ids = tokenizer.apply_chat_template(prompt, return_tensors="pt", add_generation_prompt=True).to(model.device)
 
         with torch.no_grad():
             output = model.generate(

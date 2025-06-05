@@ -15,7 +15,7 @@ dp.include_router(router)
 # Всплывающий список команд бота
 async def set_commands(bot: Bot):
     commands = [
-        types.BotCommand(command="send", description="/send <текст> | Нейро АбAIв ответит")
+        types.BotCommand(command="talk", description="/talk <текст> | Нейро АбAIв ответит")
     ]
     await bot.set_my_commands(commands)
 

@@ -8,13 +8,13 @@ LOG_DIR = BASE_DIR / "logs"
 DATA_DIR = BASE_DIR / "data" / "processed"
 CHECKPOINTS_DIR = BASE_DIR / "checkpoints"
 
-def get_next_versioned_dir(base_dir: Path, prefix: str = "final_model_v") -> Path:
+def get_next_versioned_dir(base_dir: Path, prefix: str = "model_v") -> Path:
     i = 1
     while (base_dir / f"{prefix}{i}").exists():
         i += 1
     return base_dir / f"{prefix}{i}"
 
-def get_versioned_dir(base_dir: Path, prefix: str = "final_model_v") -> Path:
+def get_versioned_dir(base_dir: Path, prefix: str = "model_v") -> Path:
     i = 1
     while (base_dir / f"{prefix}{i}").exists():
         i += 1
