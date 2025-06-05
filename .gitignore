@@ -8,3 +8,6 @@
 /__pycache__
 src/bot/__pycache__
 src/shared/__pycache__
+data/processed/*
+!data/processed/
+!data/processed/.gitkeep
