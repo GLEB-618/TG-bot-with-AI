@@ -1,8 +1,10 @@
 /.env
 /.venv
 /chekpoints
-/data
+/data/raw
 /logs
 /run_bot.ps1
 /run_train.ps1
 /__pycache__
+src/bot/__pycache__
+src/shared/__pycache__
