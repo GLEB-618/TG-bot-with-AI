@@ -29,7 +29,7 @@ class TextGenerationCallback(TrainerCallback):
             )
 
         decoded = tokenizer.decode(output[0], skip_special_tokens=True)
-        train_logger.info(f"Генерация после эпохи {state.epoch:.0f}: decoded")
+        train_logger.info(f"Генерация после эпохи {state.epoch:.0f}: {decoded}")
 
 class TrainLoggerCallback(TrainerCallback):
     def __init__(self):

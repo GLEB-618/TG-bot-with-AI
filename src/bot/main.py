@@ -1,7 +1,6 @@
 import asyncio
 from aiogram import Bot, Dispatcher, Router, types
-from bot.config import TOKEN
-from shared import bot_logger
+from shared import TOKEN, bot_logger
 from handlers import setup_all_routers
 
 

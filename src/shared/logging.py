@@ -1,16 +1,14 @@
 import logging
-import os
-from dotenv import load_dotenv
-from shared import LOG_DIR
+from shared.paths import LOG_DIR
+from shared.сonfig import LOG_LEVEL
 
-load_dotenv()
 
-LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
 LOG_LEVEL_NUM = getattr(logging, LOG_LEVEL, logging.INFO)
 
 LOG_DIR.mkdir(parents=True, exist_ok=True)
 
 def get_logger(name: str, filename: str) -> logging.Logger:
+    from shared import LOG_DIR, LOG_LEVEL
     logger = logging.getLogger(name)
     logger.setLevel(LOG_LEVEL_NUM)
 
@@ -29,6 +27,7 @@ def get_logger(name: str, filename: str) -> logging.Logger:
             stream_handler.setLevel(LOG_LEVEL_NUM)
 
         logger.addHandler(file_handler)
-        logger.addHandler(stream_handler)
+        if name != "aiogram":
+            logger.addHandler(stream_handler)
 
     return logger

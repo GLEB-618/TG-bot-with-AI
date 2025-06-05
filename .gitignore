@@ -6,6 +6,7 @@
 /run_train.ps1
 /__pycache__
 src/bot/__pycache__
+src/bot/handlers/__pycache__
 src/shared/__pycache__
 data/processed/*
 !data/processed/

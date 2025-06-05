@@ -10,7 +10,7 @@ from training.prepare_data import get_dataset
 from training.collate_fn import collate_fn
 from training.callbacks import callbacks
 
-from shared import CHECKPOINTS_DIR, train_logger
+from shared import CHECKPOINTS_DIR, train_logger, BASE_MODEL, get_next_versioned_dir
 
 
 with open("training/config.yaml", "r") as f:
@@ -23,9 +23,9 @@ bnb_config = dict(
     bnb_4bit_compute_dtype=torch.float16,
 )
 
-tokenizer = AutoTokenizer.from_pretrained(config["model_name"], trust_remote_code=True)
+tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL, trust_remote_code=True)
 model = AutoModelForCausalLM.from_pretrained(
-    config["model_name"],
+    BASE_MODEL,
     device_map="auto",
     trust_remote_code=True,
     **bnb_config
@@ -65,12 +65,6 @@ trainer = Trainer(
 model.config.use_cache = False # type: ignore
 train_logger.info("Начало обучения!")
 trainer.train()
-
-def get_next_versioned_dir(base_dir: Path, prefix: str = "final_model_v") -> Path:
-    i = 1
-    while (base_dir / f"{prefix}{i}").exists():
-        i += 1
-    return base_dir / f"{prefix}{i}"
 
 FINAL_DIR = get_next_versioned_dir(CHECKPOINTS_DIR)
 

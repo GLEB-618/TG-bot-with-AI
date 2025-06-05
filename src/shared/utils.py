@@ -1,9 +1,8 @@
 import time
 import logging
-from shared import bot_logger
 
 class Timer:
-    def __init__(self, logger: logging.Logger = bot_logger, label: str ="⏱"):
+    def __init__(self, logger: logging.Logger, label: str ="⏱"):
         self.label = label
         self.logger = logger
 

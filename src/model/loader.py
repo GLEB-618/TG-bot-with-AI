@@ -1,23 +1,31 @@
 from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers.utils.quantization_config import BitsAndBytesConfig
 from peft import PeftModel
 from pathlib import Path
-from typing import Union
+import torch
+from shared import CHECKPOINTS_DIR, get_versioned_dir, USE_BASE_MODEL, BASE_MODEL
 
-def load_model(model_path: Path):
-    tokenizer = AutoTokenizer.from_pretrained(model_path, use_fast=True)
+FINAL_DIR = get_versioned_dir(CHECKPOINTS_DIR)
 
-    base_model = AutoModelForCausalLM.from_pretrained(
-        model_path,
-        device_map="auto",
-        torch_dtype="auto"
+def load_model():
+    bnb_config = BitsAndBytesConfig(
+        load_in_4bit=True,
+        bnb_4bit_compute_dtype=torch.float16,
+        bnb_4bit_use_double_quant=True,
+        bnb_4bit_quant_type="nf4"
     )
 
-    # Проверяем, подключен ли LoRA
-    adapter_path = model_path / "adapter_config.json"
-    if adapter_path.exists():
-        model = PeftModel.from_pretrained(base_model, model_path)
-    else:
-        model = base_model
+    tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL, use_fast=True)
+
+    base_model = AutoModelForCausalLM.from_pretrained(
+        BASE_MODEL,
+        trust_remote_code=True,
+        quantization_config=bnb_config,
+        device_map="auto"
+    )
+
+    if not USE_BASE_MODEL:
+        model = PeftModel.from_pretrained(base_model, FINAL_DIR)
 
     model.eval()
     return model, tokenizer
