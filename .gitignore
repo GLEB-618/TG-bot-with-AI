@@ -1,6 +1,5 @@
 /.env
 /.venv
-/chekpoints
 /data/raw
 /logs
 /run_bot.ps1
@@ -11,3 +10,6 @@ src/shared/__pycache__
 data/processed/*
 !data/processed/
 !data/processed/.gitkeep
+chekpoints/*
+!chekpoints/
+!chekpoints/.gitkeep
