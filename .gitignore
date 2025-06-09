@@ -2,5 +2,5 @@
 /.venv
 /data
 /logs
-/chekpoints
+/checkpoints
 **/__pycache__/
