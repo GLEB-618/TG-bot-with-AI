@@ -4,22 +4,19 @@ from transformers.training_args import TrainingArguments
 from trl import SFTTrainer
 from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
 from datasets import load_dataset
-import torch
-import yaml
+import yaml, torch
 
 from training.callbacks import callbacks
-from shared import BASE_MODEL, CHECKPOINTS_DIR, train_logger, DATA_DIR, DATASET_FILE, get_next_versioned_dir
+from shared import BASE_MODEL, CHECKPOINTS_DIR, DATA_DIR, DATASET_FILE, get_next_versioned_dir, get_bnb_config
 
 with open("training/config.yaml", "r") as f:
     config = yaml.safe_load(f)
 
+DATA_DIR.mkdir(parents=True, exist_ok=True)
+CHECKPOINTS_DIR.mkdir(parents=True, exist_ok=True)
+
 # Модель и токенизатор
-bnb_config = BitsAndBytesConfig(
-    load_in_4bit=True,
-    bnb_4bit_quant_type="nf4",
-    bnb_4bit_use_double_quant=True,
-    bnb_4bit_compute_dtype=torch.float16,
-)
+bnb_config = get_bnb_config()
 
 tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL, use_fast=True)
 model = AutoModelForCausalLM.from_pretrained(BASE_MODEL, quantization_config=bnb_config, device_map="auto")
@@ -68,7 +65,6 @@ trainer = SFTTrainer(
 )
 
 model.config.use_cache = False # type: ignore
-train_logger.info("🚀 Начало обучения!")
 trainer.train()
 
 CHECKPOINTS_DIR = get_next_versioned_dir(CHECKPOINTS_DIR)

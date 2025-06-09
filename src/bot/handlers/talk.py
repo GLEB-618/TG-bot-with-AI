@@ -14,8 +14,11 @@ def setup(r: Router):
 
 
 async def talk(msg: Message):
-    bot_logger.debug(f"Пользователь {msg.from_user.username if msg.from_user else None} вызвал команду /upload")
-    prompt = msg.text.removeprefix("/talk@abAIv_bot").strip() # type: ignore
+    bot_logger.debug(f"Пользователь {msg.from_user.username if msg.from_user else None} вызвал команду /talk")
+    if "/talk@abAIv_bot" in msg.text: # type: ignore
+        prompt = msg.text.removeprefix("/talk@abAIv_bot").strip() # type: ignore
+    else:
+        prompt = msg.text.removeprefix("/talk").strip() # type: ignore
     if not prompt:
         await msg.reply("Ты не ввёл текст после команды /talk")
         return

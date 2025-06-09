@@ -38,27 +38,27 @@ class TrainLoggerCallback(TrainerCallback):
 
     def on_train_begin(self, args, state, control, **kwargs):
         self.start_time = time.time()
-        train_logger.info("🚀 Обучение началось")
+        train_logger.info("Training has started")
 
     def on_epoch_begin(self, args, state, control, **kwargs):
         self.epoch_start = time.time()
         if state.epoch is not None:
-            train_logger.info(f"📚 Начало эпохи {int(state.epoch) + 1}")
+            train_logger.info(f"The beginning of the epoch: {int(state.epoch) + 1}")
 
     def on_epoch_end(self, args, state, control, **kwargs):
         if self.epoch_start:
             epoch_duration = time.time() - self.epoch_start
             if state.epoch is not None:
-                train_logger.info(f"✅ Эпоха {int(state.epoch)} завершена за {epoch_duration:.2f} сек")
+                train_logger.info(f"Epoch {int(state.epoch)} is completed in {epoch_duration:.2f} sec")
 
     def on_save(self, args, state, control, **kwargs):
         ckpt_path = f"{args.output_dir}/checkpoint-{state.global_step}"
-        train_logger.info(f"💾 Чекпоинт сохранён: {ckpt_path}")
+        train_logger.info(f"Checkpoint saved: {ckpt_path}")
 
     def on_train_end(self, args, state, control, **kwargs):
         if self.start_time is not None:
             total_time = time.time() - self.start_time
-            train_logger.info(f"🏁 Обучение завершено за {total_time:.2f} сек")
+            train_logger.info(f"Training completed in {total_time:.2f} sec")
 
 # Подключаем их
 callbacks = [EvalLoggerCallback(), TextGenerationCallback()]

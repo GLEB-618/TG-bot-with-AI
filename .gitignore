@@ -1,13 +1,6 @@
 /.env
 /.venv
-/data/raw
+/data
 /logs
-/run_bot.ps1
-/run_train.ps1
+/chekpoints
 **/__pycache__/
-data/processed/*
-!data/processed/
-!data/processed/.gitkeep
-chekpoints/*
-!chekpoints/
-!chekpoints/.gitkeep

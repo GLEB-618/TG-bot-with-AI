@@ -23,7 +23,7 @@ async def set_commands(bot: Bot):
 # Запуск бота
 async def run_bot() -> None:
     try:
-        bot_logger.info("Бот начал работу!")
+        bot_logger.info("The bot has started working")
         await set_commands(bot)
         await dp.start_polling(bot)
     except Exception as e:

@@ -1,13 +1,11 @@
 from model.loader import load_model
-import torch
-import json
+import torch, json
 from pathlib import Path
-from shared import Timer
-from shared import bot_logger
+from shared import Timer, model_logger
 
 # Грузим модель и токенизатор один раз
 model, tokenizer = load_model()
-bot_logger.info("Модель загрузилась!")
+model_logger.info("Model loaded")
 
 # Грузим параметры генерации
 config_path = Path(__file__).resolve().parent / "config.json"
@@ -15,9 +13,11 @@ with open(config_path, "r", encoding="utf-8") as f:
     generation_config = json.load(f)
 
 async def generate_response(prompt: str) -> str:
-    bot_logger.info(f"Начало генерации ответа: {prompt}")
-    with Timer(logger=bot_logger, label="Генерация ответа"):
-        messages = [{"role": "user", "content": prompt.strip()}]
+    model_logger.debug(f"Start of response generation: {prompt}")
+    with Timer(logger=model_logger, label="Response generation"):
+        messages = [
+            {"role": "user", "content": prompt.strip()}
+        ]
 
         if tokenizer.pad_token is None:
             tokenizer.pad_token = tokenizer.eos_token
@@ -27,6 +27,8 @@ async def generate_response(prompt: str) -> str:
             tokenize=False,
             add_generation_prompt=True
         )
+
+        model_logger.debug(f"prompt_text: {prompt_text}")
 
         encoded = tokenizer(
             prompt_text,
@@ -48,13 +50,48 @@ async def generate_response(prompt: str) -> str:
                 eos_token_id=tokenizer.eos_token_id
             )
 
-        decoded = tokenizer.decode(outputs[0], skip_special_tokens=True)
-        bot_logger.info(f"Сгенерированный ответ: {decoded}")
-
-        if prompt in decoded:
-            decoded = decoded.split(prompt, 1)[-1].strip()
-
-        if "### Response:" in decoded:
-            decoded = decoded.split("### Response:")[-1].strip()
+        output_ids = outputs[0][input_ids.shape[-1]:]
+        decoded = tokenizer.decode(output_ids, skip_special_tokens=True).strip()
+        model_logger.debug(f"Raw decoded output: {decoded}")
 
         return decoded
+
+
+
+# async def generate_response(prompt: str) -> str:
+#     model_logger.debug(f"Начало генерации ответа: {prompt}")
+#     with Timer(logger=model_logger, label="Генерация ответа"):
+
+#         # Прямой текст без ролей
+#         prompt_text = prompt.strip()
+#         model_logger.debug(f"prompt_text: {prompt_text}")
+
+#         if tokenizer.pad_token is None:
+#             tokenizer.pad_token = tokenizer.eos_token
+
+#         encoded = tokenizer(
+#             prompt_text,
+#             return_tensors="pt",
+#             padding=True,
+#             truncation=True,
+#             max_length=4096
+#         ).to(model.device)
+
+#         input_ids = encoded["input_ids"]
+#         attention_mask = encoded["attention_mask"]
+
+#         with torch.no_grad():
+#             outputs = model.generate(
+#                 input_ids=input_ids,
+#                 attention_mask=attention_mask,
+#                 **generation_config,
+#                 pad_token_id=tokenizer.eos_token_id,
+#                 eos_token_id=tokenizer.eos_token_id
+#             )
+
+#         # Отрезаем prompt, оставляем только генерацию
+#         output_ids = outputs[0][input_ids.shape[-1]:]
+#         decoded = tokenizer.decode(output_ids, skip_special_tokens=True).strip()
+#         model_logger.debug(f"Raw decoded output: {decoded}")
+
+#         return decoded

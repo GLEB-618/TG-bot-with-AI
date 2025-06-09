@@ -8,7 +8,6 @@ LOG_LEVEL_NUM = getattr(logging, LOG_LEVEL, logging.INFO)
 LOG_DIR.mkdir(parents=True, exist_ok=True)
 
 def get_logger(name: str, filename: str) -> logging.Logger:
-    from shared import LOG_DIR, LOG_LEVEL
     logger = logging.getLogger(name)
     logger.setLevel(LOG_LEVEL_NUM)
 
@@ -21,13 +20,15 @@ def get_logger(name: str, filename: str) -> logging.Logger:
         file_handler.setFormatter(formatter)
         file_handler.setLevel(LOG_LEVEL_NUM)
 
+        stream_handler = logging.StreamHandler()
+        stream_handler.setFormatter(formatter)
+
         if name != "aiogram":
-            stream_handler = logging.StreamHandler()
-            stream_handler.setFormatter(formatter)
             stream_handler.setLevel(LOG_LEVEL_NUM)
+        else:
+            stream_handler.setLevel(logging.ERROR)
 
         logger.addHandler(file_handler)
-        if name != "aiogram":
-            logger.addHandler(stream_handler)
+        logger.addHandler(stream_handler)
 
     return logger
