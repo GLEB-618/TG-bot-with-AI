@@ -1,7 +1,7 @@
 from .logging import get_logger
 from .paths import BASE_DIR, LOG_DIR, DATA_DIR, CHECKPOINTS_DIR, get_next_versioned_dir, get_versioned_dir
 from .utils import Timer
-from .сonfig import TOKEN, LOG_LEVEL, BASE_MODEL, USE_BASE_MODEL, DATASET_FILE, get_bnb_config
+from .сonfig import BOT_TOKEN, LOG_LEVEL, BASE_MODEL, USE_BASE_MODEL, DATASET_FILE, get_bnb_config, HF_TOKEN
 
 bot_logger = get_logger("bot", "bot.log")
 train_logger = get_logger("train", "train.log")
@@ -18,7 +18,8 @@ __all__ = [
     "DATA_DIR",
     "CHECKPOINTS_DIR",
     "Timer",
-    "TOKEN",
+    "BOT_TOKEN",
+    "HF_TOKEN",
     "LOG_LEVEL",
     "BASE_MODEL",
     "USE_BASE_MODEL",

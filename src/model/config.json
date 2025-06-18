@@ -1,9 +1,9 @@
 {
   "max_new_tokens": 512,
-  "temperature": 0.5,
-  "top_p": 0.95,
-  "repetition_penalty": 1.1,
+  "temperature": 0.85,
+  "top_p": 0.92,
+  "top_k": 40,
   "do_sample": true,
-  "top_k": 50,
-  "no_repeat_ngram_size": 2
+  "repetition_penalty": 1.25,
+  "no_repeat_ngram_size": 4
 }
