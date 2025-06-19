@@ -1,28 +1,30 @@
-from aiogram import Router
-from aiogram.filters import Command
+from aiogram import Router, F, Bot, flags
+from aiogram.filters import Command, CommandObject
 from aiogram.types import Message
+from aiogram.enums.chat_type import ChatType
+import asyncio
 
 from shared import bot_logger
 from model import generate_response
 
 
-router = Router()
+router = Router(name="talk")
 
 
-def setup(r: Router):
-    r.message.register(talk, Command('talk'))
-
-
-async def talk(msg: Message):
+@router.message(Command('talk'), F.chat.type.in_([ChatType.GROUP, ChatType.SUPERGROUP]), F.text)
+@flags.chat_action()
+async def talk_handler(msg: Message, command: CommandObject):
     bot_logger.debug(f"Пользователь {msg.from_user.username if msg.from_user else None} вызвал команду /talk")
-    if "/talk@abAIv_bot" in msg.text: # type: ignore
-        prompt = msg.text.removeprefix("/talk@abAIv_bot").strip() # type: ignore
-    else:
-        prompt = msg.text.removeprefix("/talk").strip() # type: ignore
+    prompt = (command.args or "").strip()
     if not prompt:
-        await msg.reply("Ты не ввёл текст после команды /talk")
-        return
-    think_msg = await msg.reply("🤔 Думаю...")
-    response = await generate_response(prompt)
-    await think_msg.delete()
-    await msg.reply(response, parse_mode=None)
+        return await msg.reply("⚠️ Введите текст после /talk")
+    response = await asyncio.to_thread(generate_response, prompt)
+    await msg.reply(response)
+
+
+@router.message(F.chat.type == ChatType.PRIVATE, F.text)
+@flags.chat_action()
+async def talk_private(msg: Message, bot: Bot):
+    prompt = msg.text.strip() # type: ignore
+    response = await asyncio.to_thread(generate_response, prompt)
+    await msg.reply(response)

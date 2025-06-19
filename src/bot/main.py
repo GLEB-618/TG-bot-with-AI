@@ -1,16 +1,8 @@
 import asyncio
 from aiogram import Bot, Dispatcher, Router, types
+from aiogram.utils.chat_action import ChatActionMiddleware
 from shared import BOT_TOKEN, bot_logger
-from handlers import setup_all_routers
-
-
-router = Router()
-bot = Bot(token=BOT_TOKEN)
-dp = Dispatcher() 
-
-setup_all_routers(router)
-dp.include_router(router)
-bot_logger.debug("Routers are connected")
+from handlers import router_talk
 
 
 # Всплывающий список команд бота
@@ -25,8 +17,17 @@ async def set_commands(bot: Bot):
 # Запуск бота
 async def run_bot() -> None:
     try:
-        bot_logger.info("The bot has started working")
+        router = Router()
+        bot = Bot(token=BOT_TOKEN)
+        dp = Dispatcher() 
+
+        dp.include_routers(router, router_talk)
+        bot_logger.debug("Routers are connected")
+
+        dp.message.middleware(ChatActionMiddleware())
+
         await set_commands(bot)
+        bot_logger.info("The bot has started working")
         await dp.start_polling(bot)
     except Exception as e:
         bot_logger.error(f"Error in operation: {e}")

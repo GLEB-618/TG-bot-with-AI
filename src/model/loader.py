@@ -2,7 +2,6 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 from peft import PeftModel
 from huggingface_hub import login
 from huggingface_hub.errors import GatedRepoError, RepositoryNotFoundError, LocalTokenNotFoundError
-import torch
 from shared import CHECKPOINTS_DIR, get_versioned_dir, USE_BASE_MODEL, BASE_MODEL, model_logger, get_bnb_config, HF_TOKEN
 
 FINAL_DIR = get_versioned_dir(CHECKPOINTS_DIR)
@@ -16,7 +15,7 @@ def load_model():
         login(token=HF_TOKEN)
         bnb_config = get_bnb_config()
 
-        tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL, use_fast=True)
+        tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL)
 
         base_model = AutoModelForCausalLM.from_pretrained(
             BASE_MODEL,

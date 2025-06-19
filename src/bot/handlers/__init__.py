@@ -1,4 +1,6 @@
-from .talk import setup as setup_talk
+from .talk import router as router_talk
 
-def setup_all_routers(router):
-    setup_talk(router)
+
+__all__ = [
+    "router_talk"
+]
