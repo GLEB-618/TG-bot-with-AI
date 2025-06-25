@@ -24,7 +24,7 @@ def get_logger(name: str, filename: str) -> logging.Logger:
         stream_handler.setFormatter(formatter)
 
         if name != "aiogram":
-            stream_handler.setLevel(LOG_LEVEL_NUM)
+            stream_handler.setLevel(logging.INFO)
         else:
             stream_handler.setLevel(logging.ERROR)
 

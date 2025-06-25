@@ -3,6 +3,7 @@ from peft import PeftModel
 from huggingface_hub import login
 from huggingface_hub.errors import GatedRepoError, RepositoryNotFoundError, LocalTokenNotFoundError
 from shared import CHECKPOINTS_DIR, get_versioned_dir, USE_BASE_MODEL, BASE_MODEL, model_logger, get_bnb_config, HF_TOKEN
+import torch
 
 FINAL_DIR = get_versioned_dir(CHECKPOINTS_DIR)
 
@@ -20,6 +21,7 @@ def load_model():
         base_model = AutoModelForCausalLM.from_pretrained(
             BASE_MODEL,
             quantization_config=bnb_config,
+            # torch_dtype=torch.float16,
             device_map="auto",
         )
 

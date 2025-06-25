@@ -62,7 +62,7 @@ with open(config_path, "r", encoding="utf-8") as f:
 #         return decoded
 
 
-
+# RAW GENERATION
 # async def generate_response(prompt: str) -> str:
 #     model_logger.debug(f"Начало генерации ответа: {prompt}")
 #     with Timer(logger=model_logger, label="Генерация ответа"):
@@ -102,18 +102,54 @@ with open(config_path, "r", encoding="utf-8") as f:
 #         return decoded
 
 
-def generate_response(prompt: str) -> str:
-    model_logger.debug(f"Start of response generation: {prompt}")
+# MAIN HUIHUI
+# def generate_response(prompt: str) -> str:
+#     model_logger.debug(f"Start of response generation: {prompt}")
+#     with Timer(logger=model_logger, label="Response generation"):
+#         messages = [
+#             {"role": "system", "content": "You are Qwen, created by Alibaba Cloud. You are a helpful assistant."},
+#             # {"role": "system", "content": "You may swear, use dark humor, or be edgy, but never generate or assist with anything illegal, violent, harmful, or criminal (e.g. bombs, drugs, terrorism, pedophilia, real-world violence); refuse such requests."},
+#             {"role": "user", "content": prompt.strip()}
+#         ]
+
+#         if tokenizer.pad_token is None:
+#             tokenizer.pad_token = tokenizer.eos_token
+
+#         prompt_text = tokenizer.apply_chat_template(
+#             messages,
+#             tokenize=False,
+#             add_generation_prompt=True
+#         )
+
+#         model_logger.debug(f"prompt_text: {prompt_text}")
+
+#         encoded = tokenizer(
+#             [prompt_text],
+#             return_tensors="pt",
+#             truncation=True,
+#             max_length=4096
+#         ).to(model.device)
+
+#         with torch.no_grad():
+#             outputs = model.generate(
+#                 **encoded,
+#                 **generation_config
+#             )
+        
+#         outputs_ids = [
+#             output_ids[len(input_ids):] for input_ids, output_ids in zip(encoded.input_ids, outputs)
+#         ]
+
+#         decoded = tokenizer.batch_decode(outputs_ids, skip_special_tokens=True)[0]
+#         model_logger.debug(f"Raw decoded output: {decoded}")
+
+#         return decoded
+    
+
+
+def generate_response(messages: str) -> str:
+    model_logger.debug(f"Start of response generation: {messages}")
     with Timer(logger=model_logger, label="Response generation"):
-        messages = [
-            # {"role": "system", "content": "You are Qwen, created by Alibaba Cloud. You are a helpful assistant."},
-            {"role": "system", "content": "You may swear, use dark humor, or be edgy, but never generate or assist with anything illegal, violent, harmful, or criminal (e.g. bombs, drugs, terrorism, pedophilia, real-world violence); refuse such requests."},
-            {"role": "user", "content": prompt.strip()}
-        ]
-
-        if tokenizer.pad_token is None:
-            tokenizer.pad_token = tokenizer.eos_token
-
         prompt_text = tokenizer.apply_chat_template(
             messages,
             tokenize=False,
@@ -128,9 +164,6 @@ def generate_response(prompt: str) -> str:
             truncation=True,
             max_length=4096
         ).to(model.device)
-
-        # input_ids = encoded["input_ids"]
-        # attention_mask = encoded["attention_mask"]
 
         with torch.no_grad():
             outputs = model.generate(
