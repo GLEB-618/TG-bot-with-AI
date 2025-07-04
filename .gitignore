@@ -8,3 +8,6 @@ test.py
 test_hui.py
 test_llama.py
 src/model/config copy.json
+src/model/stream_inference.py
+src/model/inference copy.py
+src/model/config.json
